@@ -6,6 +6,9 @@ import MessageList from '../components/Talk/MessageList';
 import InputBar from '../components/Talk/InputBar';
 import { therapistVoices } from '../config/therapistVoices'; // Import the voices configuration
 
+// Use the backend URL from the Vite environment variable
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Talk = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
@@ -22,7 +25,7 @@ const Talk = () => {
       return;
     }
 
-    fetch(`http://localhost:5001/api/users/${userHash}`)
+    fetch(`${BACKEND_URL}/api/users/${userHash}`)
       .then(response => response.json())
       .then(data => {
         setUserInfo(data);
@@ -46,7 +49,7 @@ const Talk = () => {
     setMessages(newMessages);
     setInputMessage('');
 
-    fetch('http://localhost:5001/api/conversations/message', {
+    fetch(`${BACKEND_URL}/api/conversations/message`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -7,6 +7,9 @@ import StepName from './StepName';
 import StepPhoto from './StepPhoto';
 import StepVoice from './StepVoice';
 
+// Get the backend URL from the environment variable
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Onboarding = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -22,7 +25,7 @@ const Onboarding = () => {
 
       // Envoi des données utilisateur à votre back-end
       try {
-        const userResponse = await fetch('http://localhost:5001/api/users', {
+        const userResponse = await fetch(`${BACKEND_URL}/api/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -39,7 +42,7 @@ const Onboarding = () => {
           console.log('User data saved successfully');
           
           // Maintenant, créez une nouvelle conversation avec l'utilisateur
-          const conversationResponse = await fetch('http://localhost:5001/api/conversations/new-conversation', {
+          const conversationResponse = await fetch(`${BACKEND_URL}/api/conversations/new-conversation`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
