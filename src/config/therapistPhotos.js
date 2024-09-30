@@ -1,64 +1,64 @@
 // src/config/therapistPhotos.js
-import Men1Photo from '../assets/PhotoTherapist/Men1.jpg';
-import Men2Photo from '../assets/PhotoTherapist/Men2.jpg';
-import Men3Photo from '../assets/PhotoTherapist/Men3.jpg';
-import Men4Photo from '../assets/PhotoTherapist/Men4.jpg';
-import Women1Photo from '../assets/PhotoTherapist/Women1.jpg';
-import Women2Photo from '../assets/PhotoTherapist/Women2.jpg';
-import Women3Photo from '../assets/PhotoTherapist/Women3.jpg';
-import Women4Photo from '../assets/PhotoTherapist/Women4.jpg';
-import Women5Photo from '../assets/PhotoTherapist/Women5.jpg';
-import Women6Photo from '../assets/PhotoTherapist/Women6.jpg';
+import Man1Photo from '../assets/PhotoTherapist/Man1.jpg';
+import Man2Photo from '../assets/PhotoTherapist/Man2.jpg';
+import Man3Photo from '../assets/PhotoTherapist/Man3.jpg';
+import Man4Photo from '../assets/PhotoTherapist/Man4.jpg';
+import Woman1Photo from '../assets/PhotoTherapist/Woman1.jpg';
+import Woman2Photo from '../assets/PhotoTherapist/Woman2.jpg';
+import Woman3Photo from '../assets/PhotoTherapist/Woman3.jpg';
+import Woman4Photo from '../assets/PhotoTherapist/Woman4.jpg';
+import Woman5Photo from '../assets/PhotoTherapist/Woman5.jpg';
+import Woman6Photo from '../assets/PhotoTherapist/Woman6.jpg';
 
 export const therapistPhotos = [
   {
-    id: 'men1',
-    name: 'Men 1',
-    file: Men1Photo,
+    id: 'man1',
+    name: 'Man 1',
+    file: Man1Photo,
   },
   {
-    id: 'men2',
-    name: 'Men 2',
-    file: Men2Photo,
+    id: 'man2',
+    name: 'Man 2',
+    file: Man2Photo,
   },
   {
-    id: 'men3',
-    name: 'Men 3',
-    file: Men3Photo,
+    id: 'man3',
+    name: 'Man 3',
+    file: Man3Photo,
   },
   {
-    id: 'men4',
-    name: 'Men 4',
-    file: Men4Photo,
+    id: 'man4',
+    name: 'Man 4',
+    file: Man4Photo,
   },
   {
-    id: 'women1',
-    name: 'Women 1',
-    file: Women1Photo,
+    id: 'woman1',
+    name: 'Woman 1',
+    file: Woman1Photo,
   },
   {
-    id: 'women2',
-    name: 'Women 2',
-    file: Women2Photo,
+    id: 'woman2',
+    name: 'Woman 2',
+    file: Woman2Photo,
   },
   {
-    id: 'women3',
-    name: 'Women 3',
-    file: Women3Photo,
+    id: 'woman3',
+    name: 'Woman 3',
+    file: Woman3Photo,
   },
   {
-    id: 'women4',
-    name: 'Women 4',
-    file: Women4Photo,
+    id: 'woman4',
+    name: 'Woman 4',
+    file: Woman4Photo,
   },
   {
-    id: 'women5',
-    name: 'Women 5',
-    file: Women5Photo,
+    id: 'woman5',
+    name: 'Woman 5',
+    file: Woman5Photo,
   },
   {
-    id: 'women6',
-    name: 'Women 6',
-    file: Women6Photo,
+    id: 'woman6',
+    name: 'Woman 6',
+    file: Woman6Photo,
   },
 ];
