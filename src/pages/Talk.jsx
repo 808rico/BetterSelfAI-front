@@ -29,7 +29,7 @@ const Talk = () => {
       .then(response => response.json())
       .then(data => {
         setUserInfo(data);
-        setMessages([{ sender: 'AI', text: 'Hey, how are doing today?' }]);
+        setMessages([{ sender: 'AI', text: 'Hey, how are you feeling today?' }]);
       })
       .catch(error => console.error('Error fetching user info:', error));
   }, [navigate]);

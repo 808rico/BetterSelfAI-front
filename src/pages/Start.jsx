@@ -12,13 +12,13 @@ const Start = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-4 w-full">
+      {/* Logo en haut à gauche */}
+      <div className="absolute top-4 left-4">
+        <img src={logo} alt="Better Self AI Logo" className="w-24" /> {/* Logo à la même taille que dans StepName */}
+      </div>
+
       {/* Container centré */}
       <div className="w-full max-w-screen-md mx-auto flex flex-col items-center text-center">
-        {/* Logo */}
-        <div className="mb-8">
-          <img src={logo} alt="Better Self AI Logo" className="h-12 mx-auto" />
-        </div>
-
         {/* Main Text */}
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
           AI Companion who truly understands and cares.
