@@ -1,11 +1,11 @@
-// ./pages/onboarding/StepVoice.jsx
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import logo from '../../assets/Logo-Better-Self-AI.png';
 import { therapistVoices } from '../../config/therapistVoices'; // Import your voice configuration
-import { FaCheckCircle, FaVolumeUp } from 'react-icons/fa';
+import { FaCheckCircle, FaVolumeUp, FaSpinner } from 'react-icons/fa';
 
 const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
   const audioRefs = useRef({});
+  const [isLoading, setIsLoading] = useState(false); // Nouvel état pour le chargement
 
   const handleVoiceSelect = (voiceId) => {
     // Stop all other audio files
@@ -23,6 +23,12 @@ const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
     if (audioRefs.current[voiceId]) {
       audioRefs.current[voiceId].play();
     }
+  };
+
+  const handleNextStep = async () => {
+    setIsLoading(true); // Active l'état de chargement
+    await onNext(); // Appel de la fonction onNext (incluant l'API)
+    setIsLoading(false); // Désactive l'état de chargement
   };
 
   return (
@@ -72,11 +78,13 @@ const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
 
       {/* Continue Button */}
       <button 
-        className={`bg-gray-900 text-white px-6 py-3 rounded-full text-lg hover:bg-gray-800 transition duration-200 mt-6 ${!selectedVoice ? 'opacity-50 cursor-not-allowed' : ''}`}
-        onClick={onNext}
-        disabled={!selectedVoice} // Disable button if no voice is selected
+        className={`bg-gray-900 text-white px-6 py-3 rounded-full text-lg hover:bg-gray-800 transition duration-200 mt-6 flex items-center justify-center ${
+          (!selectedVoice || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+        onClick={handleNextStep}
+        disabled={!selectedVoice || isLoading} // Disable button if no voice is selected or if loading
       >
-        Continue
+        {isLoading ? <FaSpinner className="animate-spin mr-2" /> : 'Continue'}
       </button>
     </div>
   );
