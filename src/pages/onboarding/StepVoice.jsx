@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import logo from '../../assets/Logo-Better-Self-AI.png';
 import { therapistVoices } from '../../config/therapistVoices'; // Import your voice configuration
 import { FaCheckCircle, FaVolumeUp, FaSpinner } from 'react-icons/fa';
+import {ImSpinner8} from "react-icons/im";
 
 const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
   const audioRefs = useRef({});
@@ -84,7 +85,7 @@ const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
         onClick={handleNextStep}
         disabled={!selectedVoice || isLoading} // Disable button if no voice is selected or if loading
       >
-        {isLoading ? <FaSpinner className="animate-spin mr-2" /> : 'Continue'}
+        {isLoading ? <ImSpinner8 className="animate-spin mr-2" /> : 'Continue'}
       </button>
     </div>
   );
