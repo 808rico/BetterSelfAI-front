@@ -40,7 +40,7 @@ const Onboarding = () => {
 
         if (userResponse.ok) {
           console.log('User data saved successfully');
-          
+
           // Maintenant, créez une nouvelle conversation avec l'utilisateur
           const conversationResponse = await fetch(`${BACKEND_URL}/api/conversations/new-conversation`, {
             method: 'POST',
@@ -50,21 +50,19 @@ const Onboarding = () => {
             body: JSON.stringify({ userHash }),
           });
 
+          // Après la création réussie de la conversation
           if (conversationResponse.ok) {
             const conversationData = await conversationResponse.json();
-            const { conversationHash } = conversationData;
+            const { conversationHash, welcomeMessage, audio } = conversationData;
 
-            // Stocker le conversationHash dans le localStorage
             localStorage.setItem('conversationHash', conversationHash);
-
-            // Stocker l'ID de la photo sélectionnée dans le localStorage
             localStorage.setItem('selectedPhotoId', userInfo.photo);
-
-            // Stocker l'ID de la voix sélectionnée dans le localStorage
             localStorage.setItem('selectedVoiceId', userInfo.voice);
+            localStorage.setItem('welcomeMessage', welcomeMessage);
+            localStorage.setItem('welcomeAudio', audio);
 
             console.log('Conversation created successfully');
-            
+
             // Naviguer vers la page /talk
             navigate('/talk');
           } else {

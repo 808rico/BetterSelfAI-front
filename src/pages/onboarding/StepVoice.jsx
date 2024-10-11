@@ -8,6 +8,16 @@ const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
   const audioRefs = useRef({});
   const [isLoading, setIsLoading] = useState(false); // Nouvel état pour le chargement
 
+  const stopAllAudio = () => {
+    Object.keys(audioRefs.current).forEach((key) => {
+      if (audioRefs.current[key]) {
+        audioRefs.current[key].pause();
+        audioRefs.current[key].currentTime = 0; // Remettre à zéro
+      }
+    });
+  };
+  
+
   const handleVoiceSelect = (voiceId) => {
     // Stop all other audio files
     Object.keys(audioRefs.current).forEach((key) => {
@@ -27,6 +37,7 @@ const StepVoice = ({ name, selectedVoice, onChange, onNext }) => {
   };
 
   const handleNextStep = async () => {
+    stopAllAudio();
     setIsLoading(true); // Active l'état de chargement
     await onNext(); // Appel de la fonction onNext (incluant l'API)
     setIsLoading(false); // Désactive l'état de chargement

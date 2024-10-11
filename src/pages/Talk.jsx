@@ -19,6 +19,8 @@ const Talk = () => {
   useEffect(() => {
     const userHash = localStorage.getItem('userHash');
     const conversationHash = localStorage.getItem('conversationHash');
+    const welcomeMessage = localStorage.getItem('welcomeMessage');
+    const welcomeAudio = localStorage.getItem('welcomeAudio');
 
     if (!userHash || !conversationHash) {
       navigate('/start');
@@ -29,10 +31,18 @@ const Talk = () => {
       .then(response => response.json())
       .then(data => {
         setUserInfo(data);
-        setMessages([{ sender: 'AI', text: 'Hey, how are you feeling today?' }]);
+        setMessages([{ sender: 'AI', text: welcomeMessage }]); // Utilise le message de bienvenue
+        if (welcomeAudio && !isMuted) {
+          const audio = new Audio(welcomeAudio);
+          audio.play(); // Joue l'audio de bienvenue
+        }
+        // Clear welcome data after use to prevent replay on refresh
+
+        localStorage.removeItem('welcomeAudio');
       })
       .catch(error => console.error('Error fetching user info:', error));
   }, [navigate]);
+
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
@@ -64,7 +74,7 @@ const Talk = () => {
       .then(response => response.json())
       .then(data => {
         setMessages([...newMessages, { sender: 'AI', text: data.reply }]);
-        
+
         // Play the audio if it exists and is not muted
         if (data.audio && !isMuted) {
           const audio = new Audio(data.audio);
