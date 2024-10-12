@@ -1,4 +1,3 @@
-// ./components/MessageItem.jsx
 import React, { useEffect, useState } from 'react';
 import { therapistPhotos } from '../../config/therapistPhotos'; // Import des photos configurées
 
@@ -31,7 +30,8 @@ const MessageItem = ({ message }) => {
       <div 
         className={`p-2 max-w-[80%] rounded-lg ${isAI ? 'bg-gray-100' : 'bg-blue-500 text-white'}`}
       >
-        {message.text}
+        {/* Afficher le texte ou le message vocal selon le type */}
+        {message.type === 'audio' ? 'Voice Message' : message.content}
       </div>
     </div>
   );
