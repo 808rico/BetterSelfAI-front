@@ -43,11 +43,11 @@ const Talk = () => {
       .catch(error => console.error('Error fetching user info:', error));
   }, [navigate]);
 
-  const handleSendMessage = (messageType) => {
+  const handleSendMessage = (messageType, content) => {
     const userHash = localStorage.getItem('userHash');
     const conversationHash = localStorage.getItem('conversationHash');
     const selectedVoiceId = localStorage.getItem('selectedVoiceId'); // Get selected voice ID
-  
+    
     // Find the voice modelId from therapistVoices based on the selectedVoiceId
     const selectedVoice = therapistVoices.find(voice => voice.id === selectedVoiceId);
     const modelId = selectedVoice ? selectedVoice.modelId : null;
@@ -85,13 +85,14 @@ const Talk = () => {
         .catch(error => console.error('Error fetching AI response:', error));
     } else if (messageType === 'audio') {
       // Gérer les messages audio
-      const newMessages = [...messages, { sender: 'user', content: 'Voice Message', type: 'audio' }];
+      const newMessages = [...messages, { sender: 'user', content, type: 'audio' }];
       setMessages(newMessages);
   
-      // Pour l'instant, on affiche juste une alerte
+      // Pour l'instant, on envoie une alerte, plus tard on gérera l'upload du fichier audio
       alert('Enregistrement audio envoyé');
     }
   };
+  
   
 
   const handleToggleAudio = (muted) => {

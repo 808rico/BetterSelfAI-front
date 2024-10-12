@@ -31,7 +31,11 @@ const MessageItem = ({ message }) => {
         className={`p-2 max-w-[80%] rounded-lg ${isAI ? 'bg-gray-100' : 'bg-blue-500 text-white'}`}
       >
         {/* Afficher le texte ou le message vocal selon le type */}
-        {message.type === 'audio' ? 'Voice Message' : message.content}
+        {message.type === 'audio' ? (
+          <audio controls src={URL.createObjectURL(message.content)} />
+        ) : (
+          message.content
+        )}
       </div>
     </div>
   );
