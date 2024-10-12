@@ -69,7 +69,8 @@ const Talk = () => {
           userHash,
           conversationHash,
           message: inputMessage,
-          modelId // Send the modelId to the backend
+          modelId, // Send the modelId to the backend
+          type: 'text', // Spécifier que c'est un message texte
         }),
       })
         .then(response => response.json())
@@ -88,10 +89,35 @@ const Talk = () => {
       const newMessages = [...messages, { sender: 'user', content, type: 'audio' }];
       setMessages(newMessages);
   
-      // Pour l'instant, on envoie une alerte, plus tard on gérera l'upload du fichier audio
-      alert('Enregistrement audio envoyé');
+      // Utiliser FormData pour envoyer le fichier audio
+      const formData = new FormData();
+      formData.append('userHash', userHash);
+      formData.append('conversationHash', conversationHash);
+      formData.append('message', content); // Le fichier audio (Blob)
+      formData.append('modelId', modelId);
+      formData.append('type', 'audio'); // Spécifier que c'est un message audio
+  
+      fetch(`${BACKEND_URL}/api/conversations/message`, {
+        method: 'POST',
+        body: formData, // Envoyer FormData
+      })
+        .then(response => response.json())
+        .then(data => {
+          setMessages([...newMessages, { sender: 'AI', content: data.reply, type: 'text' }]);
+  
+          // Play the audio if it exists and is not muted
+          if (data.audio && !isMuted) {
+            const audio = new Audio(data.audio);
+            audio.play();
+          }
+        })
+        .catch(error => console.error('Error fetching AI response:', error));
+  
+
     }
   };
+  
+  
   
   
 
