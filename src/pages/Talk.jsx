@@ -31,7 +31,7 @@ const Talk = () => {
       .then(response => response.json())
       .then(data => {
         setUserInfo(data);
-        setMessages([{ sender: 'AI', text: welcomeMessage }]); // Utilise le message de bienvenue
+        setMessages([{ sender: 'AI', content: welcomeMessage }]); // Utilise le message de bienvenue
         if (welcomeAudio && !isMuted) {
           const audio = new Audio(welcomeAudio);
           audio.play(); // Joue l'audio de bienvenue
@@ -43,46 +43,83 @@ const Talk = () => {
       .catch(error => console.error('Error fetching user info:', error));
   }, [navigate]);
 
-
-  const handleSendMessage = () => {
-    if (inputMessage.trim() === '') return;
-
+  const handleSendMessage = (messageType, content) => {
     const userHash = localStorage.getItem('userHash');
     const conversationHash = localStorage.getItem('conversationHash');
     const selectedVoiceId = localStorage.getItem('selectedVoiceId'); // Get selected voice ID
-
+    
     // Find the voice modelId from therapistVoices based on the selectedVoiceId
     const selectedVoice = therapistVoices.find(voice => voice.id === selectedVoiceId);
     const modelId = selectedVoice ? selectedVoice.modelId : null;
-
-    const newMessages = [...messages, { sender: 'user', text: inputMessage }];
-    setMessages(newMessages);
-    setInputMessage('');
-
-    fetch(`${BACKEND_URL}/api/conversations/message`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userHash,
-        conversationHash,
-        message: inputMessage,
-        modelId // Send the modelId to the backend
-      }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        setMessages([...newMessages, { sender: 'AI', text: data.reply }]);
-
-        // Play the audio if it exists and is not muted
-        if (data.audio && !isMuted) {
-          const audio = new Audio(data.audio);
-          audio.play();
-        }
+  
+    if (messageType === 'text') {
+      // Gérer les messages texte
+      if (inputMessage.trim() === '') return;
+  
+      const newMessages = [...messages, { sender: 'user', content: inputMessage, type: 'text' }];
+      setMessages(newMessages);
+      setInputMessage('');
+  
+      fetch(`${BACKEND_URL}/api/conversations/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userHash,
+          conversationHash,
+          message: inputMessage,
+          modelId, // Send the modelId to the backend
+          type: 'text', // Spécifier que c'est un message texte
+        }),
       })
-      .catch(error => console.error('Error fetching AI response:', error));
+        .then(response => response.json())
+        .then(data => {
+          setMessages([...newMessages, { sender: 'AI', content: data.reply, type: 'text' }]);
+  
+          // Play the audio if it exists and is not muted
+          if (data.audio && !isMuted) {
+            const audio = new Audio(data.audio);
+            audio.play();
+          }
+        })
+        .catch(error => console.error('Error fetching AI response:', error));
+    } else if (messageType === 'audio') {
+      // Gérer les messages audio
+      const newMessages = [...messages, { sender: 'user', content, type: 'audio' }];
+      setMessages(newMessages);
+  
+      // Utiliser FormData pour envoyer le fichier audio
+      const formData = new FormData();
+      formData.append('userHash', userHash);
+      formData.append('conversationHash', conversationHash);
+      formData.append('message', content); // Le fichier audio (Blob)
+      formData.append('modelId', modelId);
+      formData.append('type', 'audio'); // Spécifier que c'est un message audio
+  
+      fetch(`${BACKEND_URL}/api/conversations/message`, {
+        method: 'POST',
+        body: formData, // Envoyer FormData
+      })
+        .then(response => response.json())
+        .then(data => {
+          setMessages([...newMessages, { sender: 'AI', content: data.reply, type: 'text' }]);
+  
+          // Play the audio if it exists and is not muted
+          if (data.audio && !isMuted) {
+            const audio = new Audio(data.audio);
+            audio.play();
+          }
+        })
+        .catch(error => console.error('Error fetching AI response:', error));
+  
+
+    }
   };
+  
+  
+  
+  
 
   const handleToggleAudio = (muted) => {
     setIsMuted(muted);
