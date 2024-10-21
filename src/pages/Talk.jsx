@@ -44,6 +44,7 @@ const Talk = () => {
   }, [navigate]);
 
   const handleSendMessage = (messageType, content) => {
+    console.log('onsend')
     const userHash = localStorage.getItem('userHash');
     const conversationHash = localStorage.getItem('conversationHash');
     const selectedVoiceId = localStorage.getItem('selectedVoiceId'); // Get selected voice ID
