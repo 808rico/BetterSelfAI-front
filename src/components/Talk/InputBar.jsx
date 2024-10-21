@@ -32,6 +32,7 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
 
   // Fonction pour annuler l'enregistrement
   const handleCancelRecording = () => {
+    console.log('cancel')
     clearBlobUrl(); // Effacer l'URL de l'audio enregistré
     setStatusRecording('notRecording');
   };
@@ -57,9 +58,9 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
   return (
     <div className="flex items-center justify-between w-full max-w-2xl p-2 mx-auto bg-white rounded-full shadow border border-gray-300 relative">
       {statusRecording === 'recording' && (
-        <button className="p-2 absolute left-2 rounded-full ml-2 bg-red-500 hover:bg-red-600 transition" onClick={handleCancelRecording}>
-        <FaTrash className="w-5 h-5 text-white" />
-      </button>
+        <button className="p-2 absolute z-10 left-2 rounded-full ml-2 bg-red-500 sm:hover:bg-red-600 transition" onClick={handleCancelRecording}>
+          <FaTrash className="w-5 h-5 text-white" />
+        </button>
       )}
 
       <textarea
@@ -68,8 +69,8 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
           statusRecording === 'recording'
             ? "           Recording..."
             : statusRecording === 'readyToSend'
-            ? "           Ready to send"
-            : "Message..."
+              ? "           Ready to send"
+              : "Message..."
         }
         value={inputMessage}
         onChange={(e) => onChange(e.target.value)}
@@ -81,22 +82,23 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
         }}
         rows={1}
         style={{ minHeight: '40px', maxHeight: '96px' }}
+        disabled={statusRecording === 'recording' || statusRecording === 'readyToSend'}
       />
 
       {inputMessage.trim() === '' ? (
         statusRecording === 'notRecording' ? (
           <button
-            className={`p-2 rounded-full ml-2 bg-white hover:bg-gray-100 transition ${statusRecording === 'recording' ? 'bg-blue-500 animate-pulse' : ''}`}
+            className={`p-2 rounded-full ml-2 bg-white sm:hover:bg-gray-100 transition ${statusRecording === 'recording' ? 'bg-blue-500 animate-pulse' : ''}`}
             onClick={handleMicrophoneClick}
           >
             <FaMicrophone className="w-5 h-5 text-black" />
           </button>
         ) : statusRecording === 'readyToSend' ? (
           <div className="flex items-center">
-            <button className="p-2 rounded-full ml-2 bg-green-500 hover:bg-green-600 transition" onClick={handleSendAudio}>
+            <button className="p-2 rounded-full ml-2 bg-green-500 sm:hover:bg-green-600 transition" onClick={handleSendAudio}>
               Send Audio
             </button>
-            <button className="p-2 absolute left-2 rounded-full ml-2 bg-red-500 hover:bg-red-600 transition" onClick={handleCancelRecording}>
+            <button className="p-2 absolute left-2 rounded-full ml-2 bg-red-500 sm:hover:bg-red-600 transition" onClick={handleCancelRecording}>
               <FaTrash className="w-5 h-5 text-white" />
             </button>
           </div>
@@ -110,7 +112,7 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
         )
       ) : (
         <button
-          className="p-2 rounded-full ml-2 bg-black hover:bg-gray-800 transition"
+          className="p-2 rounded-full ml-2 bg-black sm:hover:bg-gray-800 transition"
           onClick={handleSendText}
           disabled={inputMessage.trim() === ''}
         >
