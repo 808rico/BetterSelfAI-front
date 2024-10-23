@@ -32,9 +32,9 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
 
   // Fonction pour annuler l'enregistrement
   const handleCancelRecording = () => {
-    console.log('cancel')
+    stopRecording(); // Arrêter l'enregistrement en cours
     clearBlobUrl(); // Effacer l'URL de l'audio enregistré
-    setStatusRecording('notRecording');
+    setStatusRecording('notRecording'); // Réinitialiser l'état
   };
 
   // Fonction pour envoyer un message audio
