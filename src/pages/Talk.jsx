@@ -32,20 +32,29 @@ const Talk = () => {
       return;
     }
 
+    // Récupérer les informations de l'utilisateur et les 100 derniers messages
     fetch(`${BACKEND_URL}/api/users/${userHash}`)
       .then(response => response.json())
       .then(data => {
-        setUserInfo(data);
-        setMessages([{ sender: 'AI', content: welcomeMessage }]); // Utilise le message de bienvenue
+        setUserInfo(data.userInfo);
+        
+        // Charger les messages de la conversation
+        const initialMessages = data.messages || [];
+
+        console.log(initialMessages)
+        
+        setMessages([...initialMessages]);
+
+        // Jouer l'audio de bienvenue si disponible
         if (welcomeAudio && !isMuted) {
           const audio = new Audio(welcomeAudio);
-          audio.play(); // Joue l'audio de bienvenue
+          audio.play();
         }
-        // Clear welcome data after use to prevent replay on refresh
 
+        // Effacer le welcomeAudio pour éviter la répétition lors du rechargement
         localStorage.removeItem('welcomeAudio');
       })
-      .catch(error => console.error('Error fetching user info:', error));
+      .catch(error => console.error('Error fetching user info and messages:', error));
   }, [navigate]);
 
   const handleSendMessage = (messageType, content) => {
