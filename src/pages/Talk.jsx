@@ -1,16 +1,21 @@
 // ./pages/Talk.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Talk/Header';
 import MessageList from '../components/Talk/MessageList';
 import InputBar from '../components/Talk/InputBar';
 import { therapistVoices } from '../config/therapistVoices'; // Import the voices configuration
+import useFetch from '../hooks/useFetch';
+
+
+
 
 // Use the backend URL from the Vite environment variable
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Talk = () => {
   const navigate = useNavigate();
+  const authenticatedFetch = useFetch(); // Appel de useFetch
   const [userInfo, setUserInfo] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -61,7 +66,7 @@ const Talk = () => {
       setMessages(newMessages);
       setInputMessage('');
   
-      fetch(`${BACKEND_URL}/api/conversations/message`, {
+      authenticatedFetch(`${BACKEND_URL}/api/conversations/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +103,7 @@ const Talk = () => {
       formData.append('modelId', modelId);
       formData.append('type', 'audio'); // Spécifier que c'est un message audio
   
-      fetch(`${BACKEND_URL}/api/conversations/message`, {
+      authenticatedFetch(`${BACKEND_URL}/api/conversations/message`, {
         method: 'POST',
         body: formData, // Envoyer FormData
       })

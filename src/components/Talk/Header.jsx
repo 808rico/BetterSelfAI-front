@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaBars, FaEllipsisH } from 'react-icons/fa'; // Assurez-vous d'avoir installé react-icons
 import logo from '../../assets/Logo-Better-Self-AI.png';
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+
 
 const Header = ({ onToggleAudio }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,8 +32,15 @@ const Header = ({ onToggleAudio }) => {
 
   return (
     <div className="relative flex items-center justify-between w-full p-4">
-      {/* Menu Icon on the left */}
-      <FaBars className="w-6 h-6 cursor-pointer" />
+      {/* Menu Icon on the left 
+      <FaBars className="w-6 h-6 cursor-pointer" />*/}
+
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
 
       {/* Centered Logo */}
       <img src={logo} alt="Better Self AI Logo" className="w-24 mx-auto" />
