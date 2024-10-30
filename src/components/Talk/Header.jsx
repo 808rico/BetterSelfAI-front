@@ -3,12 +3,17 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaBars, FaEllipsisH } from 'react-icons/fa'; // Assurez-vous d'avoir installé react-icons
 import logo from '../../assets/Logo-Better-Self-AI.png';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { useUser } from '@clerk/clerk-react'
 
 
 const Header = ({ onToggleAudio }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(localStorage.getItem('audioMuted') === 'true'); // Check localStorage
   const menuRef = useRef(null);
+  const { isSignedIn, user, isLoaded } = useUser()
+  
+
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -28,6 +33,32 @@ const Header = ({ onToggleAudio }) => {
     localStorage.setItem('audioMuted', newMutedState);
     onToggleAudio(newMutedState); // Pass the muted state to the parent component
     setIsMenuOpen(false); // Close the menu
+  };
+
+  // Fonction pour effectuer l'appel API au backend
+  const handleUserSignIn = async () => {
+    try {
+      const token = await getToken();
+      if (token) {
+        // Appel API vers le backend avec le token d'authentification
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/login`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: 'User has signed in' })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to send login notification');
+        }
+
+        console.log('User login notification sent successfully');
+      }
+    } catch (error) {
+      console.error('Error sending login notification:', error);
+    }
   };
 
   return (

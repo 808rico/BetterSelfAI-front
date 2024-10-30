@@ -1,5 +1,5 @@
 // ./pages/Talk.jsx
-import React, { useEffect, useState,  } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Talk/Header';
 import MessageList from '../components/Talk/MessageList';
@@ -7,6 +7,8 @@ import InputBar from '../components/Talk/InputBar';
 import { therapistVoices } from '../config/therapistVoices'; // Import the voices configuration
 import useFetch from '../hooks/useFetch';
 
+import { useSignIn } from '@clerk/clerk-react'
+import { useUser } from '@clerk/clerk-react'
 
 
 
@@ -21,8 +23,10 @@ const Talk = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isMuted, setIsMuted] = useState(localStorage.getItem('audioMuted') === 'true'); // Check localStorage
 
+  const { isSignedIn, user, isLoaded } = useUser()
+
   useEffect(() => {
-    const userHash = localStorage.getItem('userHash');
+    const userHash = localStorage.getItem('userId') || localStorage.getItem('userHash');
     const conversationHash = localStorage.getItem('conversationHash');
     const welcomeMessage = localStorage.getItem('welcomeMessage');
     const welcomeAudio = localStorage.getItem('welcomeAudio');
@@ -37,12 +41,12 @@ const Talk = () => {
       .then(response => response.json())
       .then(data => {
         setUserInfo(data.userInfo);
-        
+
         // Charger les messages de la conversation
         const initialMessages = data.messages || [];
 
         console.log(initialMessages)
-        
+
         setMessages([...initialMessages]);
 
         // Jouer l'audio de bienvenue si disponible
@@ -57,24 +61,61 @@ const Talk = () => {
       .catch(error => console.error('Error fetching user info and messages:', error));
   }, [navigate]);
 
+
+  useEffect(() => {
+    if (isSignedIn && isLoaded) {
+      const oldUserHash = localStorage.getItem('userHash');
+      if (oldUserHash) {
+        console.log('appelAPI');
+
+        // Faire l'appel pour switcher userHash par userID
+        authenticatedFetch(`${BACKEND_URL}/api/users/switch-user-hash`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ oldUserHash })
+        })
+          .then(response => {
+           
+            if (!response.ok) {
+              throw new Error('Failed to update user hash');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('User hash updated successfully:', data);
+            localStorage.removeItem('userHash');
+            localStorage.setItem('userId', user.id)
+          })
+          .catch(error => {
+            console.error('Error updating user hash:', error);
+          });
+      }
+    }
+  }, [isLoaded, isSignedIn]);
+
+
+
+
   const handleSendMessage = (messageType, content) => {
     console.log('onsend')
-    const userHash = localStorage.getItem('userHash');
+    const userHash = localStorage.getItem('userId') || localStorage.getItem('userHash');
     const conversationHash = localStorage.getItem('conversationHash');
     const selectedVoiceId = localStorage.getItem('selectedVoiceId'); // Get selected voice ID
-    
+
     // Find the voice modelId from therapistVoices based on the selectedVoiceId
     const selectedVoice = therapistVoices.find(voice => voice.id === selectedVoiceId);
     const modelId = selectedVoice ? selectedVoice.modelId : null;
-  
+
     if (messageType === 'text') {
       // Gérer les messages texte
       if (inputMessage.trim() === '') return;
-  
+
       const newMessages = [...messages, { sender: 'user', content: inputMessage, type: 'text' }];
       setMessages(newMessages);
       setInputMessage('');
-  
+
       authenticatedFetch(`${BACKEND_URL}/api/conversations/message`, {
         method: 'POST',
         headers: {
@@ -91,7 +132,7 @@ const Talk = () => {
         .then(response => response.json())
         .then(data => {
           setMessages([...newMessages, { sender: 'AI', content: data.reply, type: 'text' }]);
-  
+
           // Play the audio if it exists and is not muted
           if (data.audio && !isMuted) {
             const audio = new Audio(data.audio);
@@ -103,7 +144,7 @@ const Talk = () => {
       // Gérer les messages audio
       const newMessages = [...messages, { sender: 'user', content, type: 'audio' }];
       setMessages(newMessages);
-  
+
       // Utiliser FormData pour envoyer le fichier audio
       const formData = new FormData();
       formData.append('userHash', userHash);
@@ -111,7 +152,7 @@ const Talk = () => {
       formData.append('message', content); // Le fichier audio (Blob)
       formData.append('modelId', modelId);
       formData.append('type', 'audio'); // Spécifier que c'est un message audio
-  
+
       authenticatedFetch(`${BACKEND_URL}/api/conversations/message`, {
         method: 'POST',
         body: formData, // Envoyer FormData
@@ -119,7 +160,7 @@ const Talk = () => {
         .then(response => response.json())
         .then(data => {
           setMessages([...newMessages, { sender: 'AI', content: data.reply, type: 'text' }]);
-  
+
           // Play the audio if it exists and is not muted
           if (data.audio && !isMuted) {
             const audio = new Audio(data.audio);
@@ -127,14 +168,14 @@ const Talk = () => {
           }
         })
         .catch(error => console.error('Error fetching AI response:', error));
-  
+
 
     }
   };
-  
-  
-  
-  
+
+
+
+
 
   const handleToggleAudio = (muted) => {
     setIsMuted(muted);

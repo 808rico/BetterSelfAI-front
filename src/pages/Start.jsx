@@ -1,10 +1,14 @@
 // ./pages/Start.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/Logo-Better-Self-AI.png';
 
 const Start = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   const handleStart = () => {
     navigate('/onboarding');
