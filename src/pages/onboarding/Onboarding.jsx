@@ -22,60 +22,45 @@ const Onboarding = () => {
       // Générer le hash de l'utilisateur une fois l'onboarding terminé
       const userHash = uuidv4();
       localStorage.setItem('userHash', userHash);
-
-      // Envoi des données utilisateur à votre back-end
+  
+      // Envoi des données utilisateur et création de conversation en une seule requête
       try {
-        const userResponse = await fetch(`${BACKEND_URL}/api/users`, {
+        const response = await fetch(`${BACKEND_URL}/api/new-user`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            userHash,
             name: userInfo.name,
             photo: userInfo.photo,
             voice: userInfo.voice,
-            userHash,
           }),
         });
-
-        if (userResponse.ok) {
-          console.log('User data saved successfully');
-
-          // Maintenant, créez une nouvelle conversation avec l'utilisateur
-          const conversationResponse = await fetch(`${BACKEND_URL}/api/conversations/new-conversation`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userHash }),
-          });
-
-          // Après la création réussie de la conversation
-          if (conversationResponse.ok) {
-            const conversationData = await conversationResponse.json();
-            const { conversationHash, welcomeMessage, audio } = conversationData;
-
-            localStorage.setItem('conversationHash', conversationHash);
-            localStorage.setItem('selectedPhotoId', userInfo.photo);
-            localStorage.setItem('selectedVoiceId', userInfo.voice);
-            localStorage.setItem('welcomeMessage', welcomeMessage);
-            localStorage.setItem('welcomeAudio', audio);
-
-            console.log('Conversation created successfully');
-
-            // Naviguer vers la page /talk
-            navigate('/talk');
-          } else {
-            console.error('Failed to create a new conversation');
-          }
+  
+        if (response.ok) {
+          const data = await response.json();
+          const { conversationHash, welcomeMessage, audio } = data;
+  
+          // Sauvegarder les informations de la conversation
+          localStorage.setItem('selectedPhotoId', userInfo.photo);
+          localStorage.setItem('selectedVoiceId', userInfo.voice);
+          localStorage.setItem('welcomeMessage', welcomeMessage);
+          localStorage.setItem('welcomeAudio', audio);
+  
+          console.log('User and conversation data saved successfully');
+  
+          // Naviguer vers la page /talk
+          navigate('/talk');
         } else {
-          console.error('Failed to save user data');
+          console.error('Failed to create user and conversation');
         }
       } catch (error) {
         console.error('Error:', error);
       }
     }
   };
+  
 
   const handleChange = (field, value) => {
     setUserInfo({ ...userInfo, [field]: value });

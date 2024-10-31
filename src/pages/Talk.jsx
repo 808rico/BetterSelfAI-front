@@ -31,7 +31,7 @@ const Talk = () => {
     const welcomeMessage = localStorage.getItem('welcomeMessage');
     const welcomeAudio = localStorage.getItem('welcomeAudio');
 
-    if (!userHash || !conversationHash) {
+    if (!userHash) {
       navigate('/start');
       return;
     }
@@ -101,7 +101,6 @@ const Talk = () => {
   const handleSendMessage = (messageType, content) => {
     console.log('onsend')
     const userHash = localStorage.getItem('userId') || localStorage.getItem('userHash');
-    const conversationHash = localStorage.getItem('conversationHash');
     const selectedVoiceId = localStorage.getItem('selectedVoiceId'); // Get selected voice ID
 
     // Find the voice modelId from therapistVoices based on the selectedVoiceId
@@ -123,7 +122,6 @@ const Talk = () => {
         },
         body: JSON.stringify({
           userHash,
-          conversationHash,
           message: inputMessage,
           modelId, // Send the modelId to the backend
           type: 'text', // Spécifier que c'est un message texte
@@ -148,7 +146,6 @@ const Talk = () => {
       // Utiliser FormData pour envoyer le fichier audio
       const formData = new FormData();
       formData.append('userHash', userHash);
-      formData.append('conversationHash', conversationHash);
       formData.append('message', content); // Le fichier audio (Blob)
       formData.append('modelId', modelId);
       formData.append('type', 'audio'); // Spécifier que c'est un message audio
