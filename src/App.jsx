@@ -5,6 +5,7 @@ import Start from './pages/Start';
 import Onboarding from './pages/onboarding/Onboarding';
 import Talk from './pages/Talk';
 import Admin from './pages/Admin'; // Import de la page admin
+import RedirectAfterLogin from './pages/RedirectAfterLogin'
 
 const App = () => {
   return (
@@ -14,7 +15,8 @@ const App = () => {
         <Route path="/start" element={<Start />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/talk" element={<Talk />} />
-        <Route path="/admin" element={<Admin />} /> {/* Route protégée */}
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/redirect-after-login" element={<RedirectAfterLogin />} />
       </Routes>
     </Router>
   );
