@@ -11,7 +11,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const Start = () => {
   const navigate = useNavigate();
   const { user, isSignedIn } = useUser();
-  const authenticatedFetch = useFetch(); // Appel de useFetch
+  
 
   useEffect(() => {
     const checkUser = async () => {
