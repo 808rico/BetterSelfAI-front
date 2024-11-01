@@ -59,7 +59,7 @@ const Header = ({ onToggleAudio }) => {
       <div className="flex items-center">
         <SignedOut>
           <SignInButton>
-            <FaRegUserCircle className="w-8 h-8 cursor-pointer hover:text-blue-900 transition duration-200" />
+            <FaRegUserCircle className="w-8 h-8 cursor-pointer hover:text-blue-900 hover:scale-110 transition duration-200" />
           </SignInButton>
         </SignedOut>
         <SignedIn>
