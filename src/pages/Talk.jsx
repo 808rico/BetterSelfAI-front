@@ -66,7 +66,7 @@ const Talk = () => {
     if (isSignedIn && isLoaded) {
       const oldUserHash = localStorage.getItem('userHash');
       if (oldUserHash) {
-        console.log('appelAPI');
+        
 
         // Faire l'appel pour switcher userHash par userID
         authenticatedFetch(`${BACKEND_URL}/api/users/switch-user-hash`, {

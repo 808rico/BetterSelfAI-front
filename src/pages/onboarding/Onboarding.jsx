@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useUser } from '@clerk/clerk-react'
+
 import StepName from './StepName';
 import StepPhoto from './StepPhoto';
 import StepVoice from './StepVoice';
@@ -14,14 +16,24 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [userInfo, setUserInfo] = useState({ name: '', photo: '', voice: '' });
+  const { isSignedIn, user, isLoaded } = useUser()
 
   const handleNext = async () => {
     if (step < 3) {
       setStep(step + 1);
     } else {
+
+      let userHash;
       // Générer le hash de l'utilisateur une fois l'onboarding terminé
-      const userHash = uuidv4();
-      localStorage.setItem('userHash', userHash);
+      if(isSignedIn){
+        userHash = user.id
+        localStorage.setItem('userId', user.id);
+      }
+      else{
+        userHash = uuidv4();
+        localStorage.setItem('userHash', userHash);
+      }
+      
   
       // Envoi des données utilisateur et création de conversation en une seule requête
       try {
@@ -40,7 +52,7 @@ const Onboarding = () => {
   
         if (response.ok) {
           const data = await response.json();
-          const { conversationHash, welcomeMessage, audio } = data;
+          const {  welcomeMessage, audio } = data;
   
           // Sauvegarder les informations de la conversation
           localStorage.setItem('selectedPhotoId', userInfo.photo);

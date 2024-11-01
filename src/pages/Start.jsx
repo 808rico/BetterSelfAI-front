@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/Logo-Better-Self-AI.png';
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 
 const Start = () => {
   const navigate = useNavigate();
@@ -34,12 +35,27 @@ const Start = () => {
         </p>
 
         {/* Button */}
-        <button 
+        <button
           className="bg-gray-900 text-white px-6 py-3 rounded-full text-lg hover:bg-gray-800 transition duration-200"
           onClick={handleStart}
         >
           Start Talking
         </button>
+
+        <SignedOut>
+          <SignInButton 
+          forceRedirectUrl="/redirect-after-login"
+          fallbackRedirectUrl="/"
+          signUpForceRedirectUrl="/redirect-after-login"
+          signUpFallbackRedirectUrl="/"
+          
+          />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+
+
       </div>
     </div>
   );
