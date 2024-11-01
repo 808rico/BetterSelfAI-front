@@ -1,19 +1,15 @@
 // ./components/Talk/Header.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import { FaBars, FaEllipsisH } from 'react-icons/fa'; // Assurez-vous d'avoir installé react-icons
+import { FaBars, FaEllipsisH, FaRegUserCircle } from 'react-icons/fa'; // Assurez-vous d'avoir installé react-icons
 import logo from '../../assets/Logo-Better-Self-AI.png';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import { useUser } from '@clerk/clerk-react'
-
+import { useUser } from '@clerk/clerk-react';
 
 const Header = ({ onToggleAudio }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMuted, setIsMuted] = useState(localStorage.getItem('audioMuted') === 'true'); // Check localStorage
+  const [isMuted, setIsMuted] = useState(localStorage.getItem('audioMuted') === 'true');
   const menuRef = useRef(null);
-  const { isSignedIn, user, isLoaded } = useUser()
-
-
-
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -31,41 +27,20 @@ const Header = ({ onToggleAudio }) => {
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
     localStorage.setItem('audioMuted', newMutedState);
-    onToggleAudio(newMutedState); // Pass the muted state to the parent component
-    setIsMenuOpen(false); // Close the menu
+    onToggleAudio(newMutedState);
+    setIsMenuOpen(false);
   };
-
-
 
   return (
     <div className="relative flex items-center justify-between w-full p-4">
-      {/* Menu Icon on the left 
-      <FaBars className="w-6 h-6 cursor-pointer" />*/}
-
-      <SignedOut>
-        <SignInButton
-          forceRedirectUrl="/redirect-after-login"
-          fallbackRedirectUrl="/"
-          signUpForceRedirectUrl="/redirect-after-login"
-          signUpFallbackRedirectUrl="/"
-
-        />
-      </SignedOut>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
-
-      {/* Centered Logo */}
-      <img src={logo} alt="Better Self AI Logo" className="w-24 mx-auto" />
-
-      {/* Three Dots Icon on the right */}
+      {/* Three Dots Icon on the left */}
       <div className="relative">
         <FaEllipsisH className="w-6 h-6 cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)} />
 
         {isMenuOpen && (
           <div
             ref={menuRef}
-            className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-2"
+            className="absolute left-0 mt-2 w-40 bg-white rounded-md shadow-lg py-2"
           >
             <button
               className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
@@ -75,6 +50,21 @@ const Header = ({ onToggleAudio }) => {
             </button>
           </div>
         )}
+      </div>
+
+      {/* Centered Logo */}
+      <img src={logo} alt="Better Self AI Logo" className="w-24 mx-auto" />
+
+      {/* Login or User Button on the right */}
+      <div className="flex items-center">
+        <SignedOut>
+          <SignInButton>
+            <FaRegUserCircle className="w-8 h-8 cursor-pointer hover:text-blue-900 transition duration-200" />
+          </SignInButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </div>
     </div>
   );
