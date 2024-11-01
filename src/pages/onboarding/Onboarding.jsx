@@ -59,6 +59,7 @@ const Onboarding = () => {
           localStorage.setItem('selectedVoiceId', userInfo.voice);
           localStorage.setItem('welcomeMessage', welcomeMessage);
           localStorage.setItem('welcomeAudio', audio);
+          localStorage.setItem('hasBeenOnboarded',true)
   
           console.log('User and conversation data saved successfully');
   

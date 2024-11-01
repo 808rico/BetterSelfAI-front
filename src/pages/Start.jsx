@@ -2,10 +2,42 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/Logo-Better-Self-AI.png';
+import { useUser } from "@clerk/clerk-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import useFetch from '../hooks/useFetch';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Start = () => {
   const navigate = useNavigate();
+  const { user, isSignedIn } = useUser();
+  const authenticatedFetch = useFetch(); // Appel de useFetch
+
+  useEffect(() => {
+    const checkUser = async () => {
+      if (isSignedIn && user) {
+        try {
+          // Appel API pour vérifier l'existence de l'utilisateur dans la base de données
+          const response = await fetch(`${BACKEND_URL}/api/users/check-user/${user.id}`);
+          const data = await response.json();
+
+          // Redirection et stockage des données dans le localStorage
+          if (data.exists) {
+            localStorage.setItem("userId", user.id);
+            localStorage.setItem("selectedName", data.name || "");
+            localStorage.setItem("selectedPhotoId", data.photo || "");
+            localStorage.setItem("selectedVoiceId", data.voice || "");
+            navigate("/talk");
+          }
+        } catch (error) {
+          console.error("Error checking user:", error);
+        }
+      }
+    };
+
+    checkUser();
+  }, [isSignedIn, user, navigate]);
+
 
   useEffect(() => {
     localStorage.clear();
@@ -43,12 +75,12 @@ const Start = () => {
         </button>
 
         <SignedOut>
-          <SignInButton 
-          forceRedirectUrl="/redirect-after-login"
-          fallbackRedirectUrl="/"
-          signUpForceRedirectUrl="/redirect-after-login"
-          signUpFallbackRedirectUrl="/"
-          
+          <SignInButton
+            forceRedirectUrl="/redirect-after-login"
+            fallbackRedirectUrl="/"
+            signUpForceRedirectUrl="/redirect-after-login"
+            signUpFallbackRedirectUrl="/"
+
           />
         </SignedOut>
         <SignedIn>
