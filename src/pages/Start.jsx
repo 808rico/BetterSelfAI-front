@@ -83,7 +83,12 @@ const Start = () => {
         </button>
 
         <SignedOut>
-          <SignInButton>
+          <SignInButton
+          forceRedirectUrl="/redirect-after-login"
+          fallbackRedirectUrl="/"
+          signUpForceRedirectUrl="/redirect-after-login"
+          signUpFallbackRedirectUrl="/"
+>
             <span className="text-black no-underline cursor-pointer hover:underline mt-4">Sign In →</span>
           </SignInButton>
         </SignedOut>

@@ -30,6 +30,7 @@ const Talk = () => {
     const conversationHash = localStorage.getItem('conversationHash');
     const welcomeMessage = localStorage.getItem('welcomeMessage');
     const welcomeAudio = localStorage.getItem('welcomeAudio');
+    console.log('navigate')
 
     if (!userHash) {
       navigate('/start');
@@ -60,40 +61,6 @@ const Talk = () => {
       })
       .catch(error => console.error('Error fetching user info and messages:', error));
   }, [navigate]);
-
-
-  useEffect(() => {
-    if (isSignedIn && isLoaded) {
-      const oldUserHash = localStorage.getItem('userHash');
-      if (oldUserHash) {
-        
-
-        // Faire l'appel pour switcher userHash par userID
-        authenticatedFetch(`${BACKEND_URL}/api/users/switch-user-hash`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ oldUserHash })
-        })
-          .then(response => {
-           
-            if (!response.ok) {
-              throw new Error('Failed to update user hash');
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log('User hash updated successfully:', data);
-            localStorage.removeItem('userHash');
-            localStorage.setItem('userId', user.id)
-          })
-          .catch(error => {
-            console.error('Error updating user hash:', error);
-          });
-      }
-    }
-  }, [isLoaded, isSignedIn]);
 
 
 

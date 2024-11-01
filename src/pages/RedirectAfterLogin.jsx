@@ -11,9 +11,12 @@ const RedirectAfterLogin = () => {
     const authenticatedFetch = useFetch(); // Appel de useFetch
 
     useEffect(() => {
+        console.log('redirectafterlogin')
         const checkUserExists = async () => {
             if (isSignedIn && user) {
                 try {
+
+                    
                     // Appel API pour vérifier l'existence de l'utilisateur dans la base de données
                     const response = await fetch(`${BACKEND_URL}/api/users/check-user/${user.id}`);
                     const data = await response.json();
@@ -21,11 +24,15 @@ const RedirectAfterLogin = () => {
                     // Redirection et stockage des données dans le localStorage
                     if (data.exists) {
                         localStorage.setItem("userId", user.id);
+                        localStorage.removeItem("userHash")
                         localStorage.setItem("selectedName", data.name || "");
                         localStorage.setItem("selectedPhotoId", data.photo || "");
                         localStorage.setItem("selectedVoiceId", data.voice || "");
                         navigate("/talk");
+
+                        console.log('1')
                     } else if (localStorage.getItem('userHash')) {
+                        console.log('2')
                         console.log('switch')
                         const oldUserHash = localStorage.getItem('userHash');
 
@@ -56,6 +63,7 @@ const RedirectAfterLogin = () => {
 
 
                     } else {
+                        console.log('3')
                         localStorage.setItem("userId", user.id);
                         navigate("/onboarding");
                     }
