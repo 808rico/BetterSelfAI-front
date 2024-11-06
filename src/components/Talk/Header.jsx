@@ -1,56 +1,20 @@
-// ./components/Talk/Header.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import { FaBars, FaEllipsisH, FaRegUserCircle } from 'react-icons/fa'; // Assurez-vous d'avoir installé react-icons
+import { FaBars, FaRegUserCircle } from 'react-icons/fa'; // Burger icon
 import logo from '../../assets/Logo-Better-Self-AI.png';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import { useUser } from '@clerk/clerk-react';
+import SidePanel from './SidePanel'; // Import SidePanel
 
 const Header = ({ onToggleAudio }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMuted, setIsMuted] = useState(localStorage.getItem('audioMuted') === 'true');
-  const menuRef = useRef(null);
-  const { isSignedIn } = useUser();
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleMuteToggle = () => {
-    const newMutedState = !isMuted;
-    setIsMuted(newMutedState);
-    localStorage.setItem('audioMuted', newMutedState);
-    onToggleAudio(newMutedState);
-    setIsMenuOpen(false);
+  const togglePanel = () => {
+    setIsPanelOpen(!isPanelOpen);
   };
 
   return (
     <div className="relative flex items-center justify-between w-full p-4">
-      {/* Three Dots Icon on the left */}
-      <div className="relative">
-        <FaEllipsisH className="w-6 h-6 cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)} />
-
-        {isMenuOpen && (
-          <div
-            ref={menuRef}
-            className="absolute left-0 mt-2 w-40 bg-white rounded-md shadow-lg py-2"
-          >
-            <button
-              className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-              onClick={handleMuteToggle}
-            >
-              {isMuted ? 'Unmute Audio' : 'Mute Audio'}
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Burger Icon on the left */}
+      <FaBars className="w-6 h-6 cursor-pointer" onClick={togglePanel} />
 
       {/* Centered Logo */}
       <img src={logo} alt="Better Self AI Logo" className="w-24 mx-auto" />
@@ -58,13 +22,7 @@ const Header = ({ onToggleAudio }) => {
       {/* Login or User Button on the right */}
       <div className="flex items-center">
         <SignedOut>
-
-          
-          <SignInButton 
-          forceRedirectUrl="/redirect-after-login"
-          fallbackRedirectUrl="/"
-          signUpForceRedirectUrl="/redirect-after-login"
-          signUpFallbackRedirectUrl="/">
+          <SignInButton>
             <FaRegUserCircle className="w-8 h-8 cursor-pointer hover:text-blue-900 hover:scale-110 transition duration-200" />
           </SignInButton>
         </SignedOut>
@@ -72,6 +30,9 @@ const Header = ({ onToggleAudio }) => {
           <UserButton />
         </SignedIn>
       </div>
+
+      {/* Side Panel */}
+      {isPanelOpen && <SidePanel onClose={togglePanel} onToggleAudio={onToggleAudio} />}
     </div>
   );
 };
