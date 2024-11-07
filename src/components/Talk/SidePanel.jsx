@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { MdOutlineContactSupport } from "react-icons/md";
-import { FaTimes, FaVolumeMute, FaVolumeUp, FaHeadset } from 'react-icons/fa'; // Icons for various buttons
+import { FaTimes, FaVolumeMute, FaVolumeUp, FaHeadset, FaGem } from 'react-icons/fa'; // Icons for various buttons
+import UpgradePopup from './UpgradePopup'; // Importing the new UpgradePopup component
 
 const SidePanel = ({ onClose, onToggleAudio }) => {
   const [isMuted, setIsMuted] = useState(false);
+  const [showUpgradePopup, setShowUpgradePopup] = useState(false); // State for showing the upgrade popup
 
   useEffect(() => {
     // Vérifier la valeur dans le localStorage au chargement
@@ -55,11 +57,23 @@ const SidePanel = ({ onClose, onToggleAudio }) => {
             <MdOutlineContactSupport className="mr-2" />
             Contact Support
           </button>
+
+          {/* Upgrade to Pro Button */}
+          <button 
+            className="flex items-center w-full bg-white text-left text-gray-700 hover:bg-gray-100 px-4 py-2" 
+            onClick={() => setShowUpgradePopup(true)} // Open the upgrade popup
+          >
+            <FaGem className="mr-2" />
+            Upgrade to Pro
+          </button>
         </div>
       </div>
 
       {/* Overlay */}
       <div className="flex-1 bg-black bg-opacity-25" onClick={onClose}></div>
+
+      {/* Upgrade Popup */}
+      {showUpgradePopup && <UpgradePopup onClose={() => setShowUpgradePopup(false)} />}
     </div>
   );
 };
