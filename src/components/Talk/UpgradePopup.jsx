@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { FaTimes } from 'react-icons/fa';
-
+import { useUser } from '@clerk/clerk-react'; // Import Clerk
 
 const stripePromise = loadStripe('pk_test_51PMEaoIOSPC7ROIBJB08UPVLJRIpJ7YGfO5ob5quBxjPI3GqSc6mH4TQsS4tssCCUFrsI3ketpb39YiklfD8AMJp00p9JGHJ3i');
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+
 const UpgradePopup = ({ onClose }) => {
+  const { user } = useUser(); // Récupérer l'utilisateur
   const [selectedPlan, setSelectedPlan] = useState('yearly');
 
   const handleCheckout = async () => {
@@ -18,7 +20,10 @@ const UpgradePopup = ({ onClose }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ plan: selectedPlan }),
+        body: JSON.stringify({
+          plan: selectedPlan,
+          userId: user.id, // Inclure userId dans la requête
+        }),
       });
 
       const { sessionId } = await response.json();
