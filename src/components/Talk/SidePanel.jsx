@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { MdOutlineContactSupport } from "react-icons/md";
 import { FaTimes, FaVolumeMute, FaVolumeUp, FaHeadset, FaGem } from 'react-icons/fa'; // Icons for various buttons
+import { useUser } from '@clerk/clerk-react'; // Import Clerk's useUser hook
 import UpgradePopup from './UpgradePopup'; // Importing the new UpgradePopup component
+import useFetch from '../../hooks/useFetch';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const SidePanel = ({ onClose, onToggleAudio }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [showUpgradePopup, setShowUpgradePopup] = useState(false); // State for showing the upgrade popup
+  const [isLoading, setIsLoading] = useState(false); // Loading state for Billing Portal button
+  const { isSignedIn } = useUser(); // Retrieve the authenticated user with Clerk
+  const authenticatedFetch = useFetch(); // Appel de useFetch
 
   useEffect(() => {
-    // Vérifier la valeur dans le localStorage au chargement
     const audioMuted = localStorage.getItem('audioMuted') === 'true';
     setIsMuted(audioMuted);
   }, []);
@@ -20,27 +26,49 @@ const SidePanel = ({ onClose, onToggleAudio }) => {
     onToggleAudio(newMutedStatus);
   };
 
+  const handleBillingPortal = async () => {
+    if (!isSignedIn) {
+      alert('You must be signed in to access the billing portal.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await authenticatedFetch(`${BACKEND_URL}/api/billing/billing-portal`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok && data.url) {
+        window.location.href = data.url; // Redirect to Billing Portal
+      } else {
+        alert(data.error || 'Failed to fetch Billing Portal URL. Please try again later.');
+      }
+    } catch (err) {
+      console.error('Error fetching Billing Portal:', err);
+      alert('An error occurred. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex">
-      {/* Side Panel with animation */}
       <div className="w-3/4 md:w-1/2 bg-white shadow-lg h-full p-6 relative transform transition-transform duration-500 ease-in-out translate-x-0">
-        {/* Header Section */}
         <div className="flex items-center justify-between">
-          {/* Title */}
           <h2 className="text-xl font-semibold text-gray-900">Better Self AI</h2>
-          
-          {/* Close Button */}
           <button className="bg-white text-gray-600 hover:text-gray-800" onClick={onClose}>
             <FaTimes className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Divider */}
         <div className="border-t border-gray-200 my-4"></div>
 
-        {/* Panel Content */}
         <div className="space-y-6 mt-4">
-          {/* Mute/Unmute Audio Button */}
           <button 
             className="flex items-center w-full bg-white text-left text-gray-700 hover:bg-gray-100 px-4 py-2" 
             onClick={handleMuteToggle}
@@ -49,7 +77,6 @@ const SidePanel = ({ onClose, onToggleAudio }) => {
             {isMuted ? 'Unmute Audio' : 'Mute Audio'}
           </button>
           
-          {/* Contact Support Button */}
           <button 
             className="flex items-center w-full bg-white text-left text-gray-700 hover:bg-gray-100 px-4 py-2" 
             onClick={() => window.open("https://form.jotform.com/243101017721339", "_blank")}
@@ -58,21 +85,30 @@ const SidePanel = ({ onClose, onToggleAudio }) => {
             Contact Support
           </button>
 
-          {/* Upgrade to Pro Button */}
           <button 
             className="flex items-center w-full bg-white text-left text-gray-700 hover:bg-gray-100 px-4 py-2" 
-            onClick={() => setShowUpgradePopup(true)} // Open the upgrade popup
+            onClick={() => setShowUpgradePopup(true)}
           >
             <FaGem className="mr-2" />
             Upgrade to Pro
           </button>
+
+          {isSignedIn && (
+            <button 
+              className={`flex items-center w-full bg-white text-left text-gray-700 hover:bg-gray-100 px-4 py-2 ${isLoading && 'opacity-50'}`} 
+              onClick={handleBillingPortal}
+              disabled={isLoading}
+            >
+              {isLoading ? <span>Loading...</span> : <>
+                <FaHeadset className="mr-2" />
+                Billing Portal
+              </>}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Overlay */}
       <div className="flex-1 bg-black bg-opacity-25" onClick={onClose}></div>
-
-      {/* Upgrade Popup */}
       {showUpgradePopup && <UpgradePopup onClose={() => setShowUpgradePopup(false)} />}
     </div>
   );
