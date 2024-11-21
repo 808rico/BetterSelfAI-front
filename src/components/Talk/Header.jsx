@@ -22,7 +22,12 @@ const Header = ({ onToggleAudio }) => {
       {/* Login or User Button on the right */}
       <div className="flex items-center">
         <SignedOut>
-          <SignInButton>
+          <SignInButton
+          forceRedirectUrl="/redirect-after-login"
+          fallbackRedirectUrl="/talk"
+          signUpForceRedirectUrl="/redirect-after-login"
+          signUpFallbackRedirectUrl="/talk"
+          >
             <FaRegUserCircle className="w-8 h-8 cursor-pointer hover:text-blue-900 hover:scale-110 transition duration-200" />
           </SignInButton>
         </SignedOut>

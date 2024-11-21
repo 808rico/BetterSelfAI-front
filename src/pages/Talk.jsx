@@ -42,6 +42,8 @@ const Talk = () => {
       .then(response => response.json())
       .then(data => {
         setUserInfo(data.userInfo);
+        localStorage.setItem('have_stripe_customer_id', data.userInfo.stripe_customer_id !== null);
+
 
         // Charger les messages de la conversation
         const initialMessages = data.messages || [];
