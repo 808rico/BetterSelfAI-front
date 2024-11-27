@@ -16,8 +16,6 @@ const SidePanel = ({ onClose, onToggleAudio }) => {
   const isCustomer = localStorage.getItem('have_stripe_customer_id') === 'true';
 
 
-  console.log(isCustomer)
-
   useEffect(() => {
 
     const audioMuted = localStorage.getItem('audioMuted') === 'true';

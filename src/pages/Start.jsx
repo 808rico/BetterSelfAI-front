@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/Logo-Better-Self-AI.png';
 import { useUser } from "@clerk/clerk-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import mixpanel from 'mixpanel-browser'
+ 
+mixpanel.init(import.meta.env.VITE_MIXPANEL_PROJECT_TOKEN);
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -39,6 +42,7 @@ const Start = () => {
   }, []);
 
   const handleStart = () => {
+    mixpanel.track('ONBOARDING_START')
     navigate('/onboarding');
   };
 

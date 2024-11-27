@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { FaTimes } from 'react-icons/fa';
 import { useUser } from '@clerk/clerk-react'; // Import Clerk
-
+import mixpanel from 'mixpanel-browser'
+ 
+// create an instance Mixpanel object using your project token
+mixpanel.init(import.meta.env.VITE_MIXPANEL_PROJECT_TOKEN);
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -10,6 +13,10 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const UpgradePopup = ({ onClose }) => {
   const { user } = useUser(); // Récupérer l'utilisateur
   const [selectedPlan, setSelectedPlan] = useState('yearly');
+
+  mixpanel.track('OPEN_UPGRADE_POPUP',{
+    $user_id:localStorage.getItem("userId")
+  })
 
   const handleCheckout = async () => {
     const stripe = await stripePromise;

@@ -8,7 +8,10 @@ import { useUser } from '@clerk/clerk-react'
 import StepName from './StepName';
 import StepPhoto from './StepPhoto';
 import StepVoice from './StepVoice';
+import mixpanel from 'mixpanel-browser'
+ 
 
+mixpanel.init(import.meta.env.VITE_MIXPANEL_PROJECT_TOKEN);
 // Get the backend URL from the environment variable
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -32,6 +35,7 @@ const Onboarding = () => {
       else{
         userHash = uuidv4();
         localStorage.setItem('userHash', userHash);
+        mixpanel.identify(userHash)
       }
       
   
