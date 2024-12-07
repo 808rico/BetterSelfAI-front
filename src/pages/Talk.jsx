@@ -9,6 +9,10 @@ import useFetch from '../hooks/useFetch';
 
 import { useSignIn } from '@clerk/clerk-react'
 import { useUser } from '@clerk/clerk-react'
+import mixpanel from 'mixpanel-browser'
+ 
+// create an instance Mixpanel object using your project token
+mixpanel.init(import.meta.env.VITE_MIXPANEL_PROJECT_TOKEN);
 
 
 
@@ -26,43 +30,48 @@ const Talk = () => {
   const { isSignedIn, user, isLoaded } = useUser()
 
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const fromFollowUpEmail = params.get('from_follow_up_email');
+    const userId = params.get('user_id');
     const userHash = localStorage.getItem('userId') || localStorage.getItem('userHash');
-    const conversationHash = localStorage.getItem('conversationHash');
-    const welcomeMessage = localStorage.getItem('welcomeMessage');
-    const welcomeAudio = localStorage.getItem('welcomeAudio');
-    console.log('navigate')
+
+    // Tracking Mixpanel if from_follow_up_email is detected
+    if (fromFollowUpEmail === 'true' && userId) {
+      mixpanel.track('RESUME CONVERSATION FROM FOLLOW UP', {
+        $user_id: userId,
+      });
+
+      // Remove URL parameters
+      const newUrl = location.pathname;
+      navigate(newUrl, { replace: true });
+    }
 
     if (!userHash) {
       navigate('/start');
       return;
     }
 
-    // Récupérer les informations de l'utilisateur et les 100 derniers messages
+    // Fetch user info and messages
     fetch(`${BACKEND_URL}/api/users/${userHash}`)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setUserInfo(data.userInfo);
         localStorage.setItem('have_stripe_customer_id', data.userInfo.stripe_customer_id !== null);
 
-
-        // Charger les messages de la conversation
+        // Set messages
         const initialMessages = data.messages || [];
+        setMessages(initialMessages);
 
-        console.log(initialMessages)
-
-        setMessages([...initialMessages]);
-
-        // Jouer l'audio de bienvenue si disponible
+        // Play welcome audio if not muted
+        const welcomeAudio = localStorage.getItem('welcomeAudio');
         if (welcomeAudio && !isMuted) {
           const audio = new Audio(welcomeAudio);
           audio.play();
+          localStorage.removeItem('welcomeAudio'); // Avoid replaying audio
         }
-
-        // Effacer le welcomeAudio pour éviter la répétition lors du rechargement
-        localStorage.removeItem('welcomeAudio');
       })
-      .catch(error => console.error('Error fetching user info and messages:', error));
-  }, [navigate]);
+      .catch((error) => console.error('Error fetching user info and messages:', error));
+  }, [location, navigate]);
 
 
 
