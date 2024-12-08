@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaArrowUp, FaMicrophone, FaTrash } from 'react-icons/fa';
 import { useReactMediaRecorder } from "react-media-recorder";
 
@@ -6,6 +6,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const InputBar = ({ inputMessage, onChange, onSend }) => {
   const [statusRecording, setStatusRecording] = useState('notRecording'); // Trois états : 'notRecording', 'recording', 'readyToSend'
+  const textareaRef = useRef(null);
 
   const {
     startRecording,
@@ -13,6 +14,19 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
     mediaBlobUrl,
     clearBlobUrl
   } = useReactMediaRecorder({ audio: true });
+
+  // Ajuste la hauteur du textarea dynamiquement
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'; // Réinitialise la hauteur
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Ajuste à la hauteur du contenu
+    }
+  };
+
+  // Ajuste la hauteur à chaque modification de la valeur
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [inputMessage]);
 
   // Fonction pour commencer l'enregistrement
   const handleMicrophoneClick = () => {
@@ -56,7 +70,7 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
   };
 
   return (
-    <div className="flex items-center justify-between w-full max-w-2xl p-2 mx-auto bg-white rounded-full shadow border border-gray-300 relative">
+    <div className="flex items-center justify-between w-full rounded-xl max-w-2xl p-2 mx-auto bg-white shadow border border-gray-300 relative">
       {statusRecording === 'recording' && (
         <button className="p-2 absolute z-10 left-2 rounded-full ml-2 bg-red-500 sm:hover:bg-red-600 transition" onClick={handleCancelRecording}>
           <FaTrash className="w-5 h-5 text-white" />
@@ -64,7 +78,8 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
       )}
 
       <textarea
-        className="flex-1 p-2 rounded-full outline-none resize-none overflow-hidden bg-transparent"
+        ref={textareaRef}
+        className="flex-1 p-2 rounded-xl outline-none resize-none overflow-hidden bg-transparent"
         placeholder={
           statusRecording === 'recording'
             ? "           Recording..."
@@ -81,7 +96,7 @@ const InputBar = ({ inputMessage, onChange, onSend }) => {
           }
         }}
         rows={1}
-        style={{ minHeight: '40px', maxHeight: '96px' }}
+        style={{ minHeight: '40px', maxHeight: '120px' }}
         disabled={statusRecording === 'recording' || statusRecording === 'readyToSend'}
       />
 
